@@ -121,9 +121,14 @@ class DataDownloader(ABC):
         """downloads dataset"""
         os.makedirs(os.path.join(self.base_dir, self.name), exist_ok=True)
         for url in self.urls:
-            os.system(
-                f"wget {url} -O {os.path.join(self.base_dir, self.name, os.path.basename(url))}"
-            )
+            if url.startswith("file://"):
+                os.system(
+                    f"cp {url.split('file://')[1]} {os.path.join(self.base_dir, self.name, os.path.basename(url))}"
+                )
+            else:
+                os.system(
+                    f"wget {url} -O {os.path.join(self.base_dir, self.name, os.path.basename(url))}"
+                )
 
     def tokenize(self):
         """tokenizes dataset"""
@@ -154,6 +159,10 @@ class DataDownloader(ABC):
         if not self.exists():
             self.download()
             self.tokenize()
+
+class Korpus2000(DataDownloader):
+    name = "korpus2000"
+    urls = ["file://../lahru/data/korpus2000.jsonl.bz2"]
 
 
 class Enron(DataDownloader):
@@ -297,6 +306,7 @@ def maybe_download_gpt2_tokenizer_data(tokenizer_type, data_dir):
 
 DATA_DOWNLOADERS = {
     "pass": "pass",
+    "korpus2000": Korpus2000,
     "enron": Enron,
     "pile_subset": PileSubset,
     "pile": Pile,
