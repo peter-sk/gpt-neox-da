@@ -28,10 +28,10 @@ DATASET_CHOICES = [i for i in DATA_DOWNLOADERS.keys() if i != "pass"]
 def get_args():
     parser = argparse.ArgumentParser(description="Download & preprocess neox datasets")
     parser.add_argument(
-        "dataset",
-        nargs="?",
+        "datasets",
+        nargs="*",
         default="enron",
-        help="name of dataset to download.",
+        help="name of datasets to download.",
         choices=DATASET_CHOICES,
     )
     parser.add_argument(
@@ -59,10 +59,11 @@ def get_args():
 
 if __name__ == "__main__":
     args = get_args()
-    prepare_dataset(
-        dataset_name=args.dataset,
-        tokenizer_type=args.tokenizer,
-        data_dir=args.data_dir,
-        vocab_file=args.vocab_file,
-        merge_file=args.merge_file,
-    )
+    for dataset in args.datasets:
+        prepare_dataset(
+            dataset_name=dataset,
+            tokenizer_type=args.tokenizer,
+            data_dir=args.data_dir,
+            vocab_file=args.vocab_file,
+            merge_file=args.merge_file,
+        )

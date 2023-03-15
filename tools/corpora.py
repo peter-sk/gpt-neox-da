@@ -160,9 +160,44 @@ class DataDownloader(ABC):
             self.download()
             self.tokenize()
 
-class Korpus2000(DataDownloader):
-    name = "korpus2000"
-    urls = ["file://../lahru/data/korpus2000.jsonl.bz2"]
+class Korpus2000DA(DataDownloader):
+    name = "korpus2000_da"
+    urls = ["file://../data/korpus2000.jsonl.zst"]
+
+
+class EuroparlDA(DataDownloader):
+    name = "europarl_da"
+    urls = ["file://../data/europarl.jsonl.zst"]
+
+
+class BibleUedinDA(DataDownloader):
+    name = "bible-uedin_da"
+    urls = ["file://../data/bible-uedin.jsonl.zst"]
+
+
+class C4DA(DataDownloader):
+    name = "c4_da"
+    urls = ["file://../data/c4.jsonl.zst"]
+
+
+class ELRCEMEADA(DataDownloader):
+    name = "elrc-emea_da"
+    urls = ["file://../data/elrc-emea.jsonl.zst"]
+
+
+class EUBookshopDA(DataDownloader):
+    name = "eubookshop_da"
+    urls = ["file://../data/eubookshop.jsonl.zst"]
+
+
+class OpenSubtitlesDA(DataDownloader):
+    name = "opensubtitles_da"
+    urls = ["file://../data/opensubtitles.jsonl.zst"]
+
+
+class Wiki40BDA(DataDownloader):
+    name = "wiki40b_da"
+    urls = ["file://../data/wiki40b.jsonl.zst"]
 
 
 class Enron(DataDownloader):
@@ -306,7 +341,14 @@ def maybe_download_gpt2_tokenizer_data(tokenizer_type, data_dir):
 
 DATA_DOWNLOADERS = {
     "pass": "pass",
-    "korpus2000": Korpus2000,
+    "korpus2000_da": Korpus2000DA,
+    "europarl_da": EuroparlDA,
+    "bible-uedin_da": BibleUedinDA,
+    "c4_da": C4DA,
+    "elrc-emea_da": ELRCEMEADA,
+    "eubookshop_da": EUBookshopDA,
+    "opensubtitles_da": OpenSubtitlesDA,
+    "wiki40b_da": Wiki40BDA,
     "enron": Enron,
     "pile_subset": PileSubset,
     "pile": Pile,

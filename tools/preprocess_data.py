@@ -45,6 +45,7 @@ class Encoder(object):
     def initializer(self):
         # Use Encoder class as a container for global data
         Encoder.tokenizer = build_tokenizer(self.args)
+        Encoder.max_length = Encoder.tokenizer.tokenizer.model_max_length if hasattr(Encoder.tokenizer.tokenizer, 'model_max_length') else 2048
 
     def encode(self, text):
         if self.args.ftfy:
@@ -53,6 +54,9 @@ class Encoder(object):
         for key in self.args.jsonl_keys:
             doc_ids = []
             text_ids = Encoder.tokenizer.tokenize(text)
+            if len(text_ids) > Encoder.max_length:
+                print(f"WARNING: truncating {len(text_ids)} to {Encoder.max_length} tokens")
+                text_ids = text_ids[:Encoder.max_length]
             if len(text_ids) > 0:
                 doc_ids.append(text_ids)
             if self.args.append_eod:
