@@ -1,6 +1,34 @@
 # Suggested data paths when using GPT-NeoX locally
 {
-  "data-path": "data/europarl_da/europarl_da_text_document",
+  "train-data-paths": [
+    "data/korpus2000_da/korpus2000_da_text_document",
+    "data/europarl_da/europarl_da_text_document",
+    "data/bible-uedin_da/bible-uedin_da_text_document",
+    "data/elrc-emea_da/elrc-emea_da_text_document",
+    "data/wiki40b_da/wiki40b_da_text_document",
+    "data/opensubtitles_da/opensubtitles_da_text_document",
+    "data/eubookshop_da/eubookshop_da_text_document"
+  ],
+
+  "test-data-paths": [
+    "data/korpus2000_da/korpus2000_da_text_document",
+    "data/europarl_da/europarl_da_text_document",
+    "data/bible-uedin_da/bible-uedin_da_text_document",
+    "data/elrc-emea_da/elrc-emea_da_text_document",
+    "data/wiki40b_da/wiki40b_da_text_document",
+    "data/opensubtitles_da/opensubtitles_da_text_document",
+    "data/eubookshop_da/eubookshop_da_text_document"
+  ],
+
+  "valid-data-paths": [
+    "data/korpus2000_da/korpus2000_da_text_document",
+    "data/europarl_da/europarl_da_text_document",
+    "data/bible-uedin_da/bible-uedin_da_text_document",
+    "data/elrc-emea_da/elrc-emea_da_text_document",
+    "data/wiki40b_da/wiki40b_da_text_document",
+    "data/opensubtitles_da/opensubtitles_da_text_document",
+    "data/eubookshop_da/eubookshop_da_text_document"
+  ],
 
   # or for weighted datasets:
   # "train-data-paths": ["data/enwik8/enwik8_text_document", "data/enwik8/enwik8_text_document"],
@@ -12,15 +40,15 @@
 
   # If weight_by_num_documents is True, Builds dataset weights from a multinomial distribution over groups of data according to the number of documents in each group.
   # WARNING: setting this to True will override any user provided weights
-  # "weight_by_num_documents": false,
-  # "weighted_sampler_alpha": 0.3,
+  "weight_by_num_documents": True,
+  "weighted_sampler_alpha": 0.3,
 
-  "vocab-file": "../data/gpt2-da-tokenizer/vocab.json",
-  "merge-file": "../data/gpt2-da-tokenizer/merges.txt",
+  "vocab-file": "../data/tokenizer/vocab.json",
+  "merge-file": "../data/tokenizer/merges.txt",
 
   "save": "checkpoints",
   "load": "checkpoints",
-  "checkpoint_validation_with_forward_pass": False,
+  "checkpoint_validation_with_forward_pass": True,
 
   "tensorboard-dir": "tensorboard",
   "log-dir": "logs",

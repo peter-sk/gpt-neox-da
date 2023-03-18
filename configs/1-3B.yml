@@ -18,8 +18,8 @@
    "output_layer_parallelism": "column",
 
    # these should provide some speedup but takes a while to build, set to true if desired
-   "scaled-upper-triang-masked-softmax-fusion": false,
-   "bias-gelu-fusion": false,
+   "scaled-upper-triang-masked-softmax-fusion": True,
+   "bias-gelu-fusion": True,
 
    # init methods
    "init_method": "small_init",
@@ -48,7 +48,7 @@
   },
 
    # batch / data settings
-   "train_micro_batch_size_per_gpu": 4,
+   "train_micro_batch_size_per_gpu": 8,
    "data-impl": "mmap",
 
    # activation checkpointing
