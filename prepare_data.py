@@ -31,8 +31,8 @@ def get_args():
         "datasets",
         nargs="*",
         default=["enwik8"],
-        help="name of datasets to download.",
-        choices=DATASET_CHOICES,
+        help="name of datasets to download / local files to process.",
+#        choices=DATASET_CHOICES,
     )
     parser.add_argument(
         "-t",

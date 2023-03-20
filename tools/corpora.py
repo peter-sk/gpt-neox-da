@@ -173,45 +173,6 @@ class DataDownloader(ABC):
 
         self.tokenize()
 
-class Korpus2000DA(DataDownloader):
-    name = "korpus2000_da"
-    urls = ["file://../data/korpus2000.jsonl.zst"]
-
-
-class EuroparlDA(DataDownloader):
-    name = "europarl_da"
-    urls = ["file://../data/europarl.jsonl.zst"]
-
-
-class BibleUedinDA(DataDownloader):
-    name = "bible-uedin_da"
-    urls = ["file://../data/bible-uedin.jsonl.zst"]
-
-
-class C4DA(DataDownloader):
-    name = "c4_da"
-    urls = ["file://../data/c4.jsonl.zst"]
-
-
-class ELRCEMEADA(DataDownloader):
-    name = "elrc-emea_da"
-    urls = ["file://../data/elrc-emea.jsonl.zst"]
-
-
-class EUBookshopDA(DataDownloader):
-    name = "eubookshop_da"
-    urls = ["file://../data/eubookshop.jsonl.zst"]
-
-
-class OpenSubtitlesDA(DataDownloader):
-    name = "opensubtitles_da"
-    urls = ["file://../data/opensubtitles.jsonl.zst"]
-
-
-class Wiki40BDA(DataDownloader):
-    name = "wiki40b_da"
-    urls = ["file://../data/wiki40b.jsonl.zst"]
-
 
 class Enron(DataDownloader):
     name = "enron"
@@ -397,14 +358,19 @@ def prepare_dataset(
     maybe_download_gpt2_tokenizer_data(tokenizer_type, data_dir)
     DownloaderClass = DATA_DOWNLOADERS.get(dataset_name.lower(), None)
     if DownloaderClass is None:
+        if os.path.isfile(dataset_name):
+            class DownloaderClass(DataDownloader):
+                name = dataset_name.split("/")[-1].split(".")[0]
+                urls = [f"file://{dataset_name}"]
+    if DownloaderClass is None:
         raise NotImplementedError(
-            f'Dataset "{dataset_name}" not recognized - please choose from {list(DATA_DOWNLOADERS.keys())}'
+            f'Dataset "{dataset_name}" not recognized - please choose from {list(DATA_DOWNLOADERS.keys())} or provide a local file'
         )
     elif DownloaderClass == "pass":
         # pass on building dataset (for unit tests)
         pass
     else:
-        num_workers = 1 if dataset_name == "enwik8" else num_workers
+        num_workers = 1 if dataset_name == "enwik8" or "wiki" in dataset_name else num_workers
         d = DownloaderClass(
             tokenizer_type=tokenizer_type,
             vocab_file=vocab_file,
