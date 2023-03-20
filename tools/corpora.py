@@ -310,14 +310,6 @@ def maybe_download_gpt2_tokenizer_data(tokenizer_type, data_dir):
 
 DATA_DOWNLOADERS = {
     "pass": "pass",
-    "korpus2000_da": Korpus2000DA,
-    "europarl_da": EuroparlDA,
-    "bible-uedin_da": BibleUedinDA,
-    "c4_da": C4DA,
-    "elrc-emea_da": ELRCEMEADA,
-    "eubookshop_da": EUBookshopDA,
-    "opensubtitles_da": OpenSubtitlesDA,
-    "wiki40b_da": Wiki40BDA,
     "enron": Enron,
     "pile_subset": PileSubset,
     "pile": Pile,
