@@ -300,6 +300,9 @@ class HFGPT2Tokenizer(AbstractTokenizer):
     def detokenize(self, token_ids):
         return self.tokenizer.decode(token_ids)
 
+    def save_pretrained(self, path):
+        self.tokenizer.save_pretrained(path)
+
     @property
     def eod(self):
         return self.eod_id
