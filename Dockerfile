@@ -19,11 +19,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 #### System package (uses default Python 3 version in Ubuntu 20.04)
 RUN apt-get update -y && \
     apt-get install -y \
+#        git python3.9 python3.9-dev libpython3.9-dev python3.9-distutils sudo pdsh \
         git python3 python3-dev libpython3-dev python3-pip sudo pdsh \
         htop llvm-9-dev tmux zstd software-properties-common build-essential autotools-dev \
         nfs-common pdsh cmake g++ gcc curl wget vim less unzip htop iftop iotop ca-certificates ssh \
         rsync iputils-ping net-tools libcupti-dev libmlx4-1 infiniband-diags ibutils ibverbs-utils \
         rdmacm-utils perftest rdma-core nano && \
+#    curl -sSL https://bootstrap.pypa.io/get-pip.py | python3.9 && \
+#    mv -v /usr/local/bin/pip* /usr/bin && \
     update-alternatives --install /usr/bin/python python /usr/bin/python3 1 && \
     update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1 && \
     pip install --upgrade pip && \
@@ -109,5 +112,8 @@ RUN python megatron/fused_kernels/setup.py install
 RUN mkdir -p /tmp && chmod 0777 /tmp
 
 #### SWITCH TO mchorse USER
-USER mchorse
-WORKDIR /home/mchorse
+#USER mchorse
+#WORKDIR /home/mchorse
+RUN git config --global --add safe.directory /gpt-neox
+RUN ln -s python3-config /usr/bin/python-config
+WORKDIR /gpt-neox
