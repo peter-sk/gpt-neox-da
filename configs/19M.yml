@@ -41,7 +41,7 @@
     "contiguous_gradients": True,
   },
 
-  "train_micro_batch_size_per_gpu": 4, #32,
+  "train_micro_batch_size_per_gpu": 32,
   "gas": 1,
   "data-impl": "mmap",
   "num_workers": 1,

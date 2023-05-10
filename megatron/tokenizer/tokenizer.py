@@ -157,7 +157,7 @@ class _GPT2BPETokenizer(AbstractTokenizer):
         self.tokenizer = GPT2Tokenizer(
             vocab_file, merge_file, errors="replace", special_tokens=[], max_len=None
         )
-        self.eod_id = self.tokenizer.encoder["<|endoftext|>"]
+        self.eod_id = self.tokenizer.encoder["<eos>"]
 
     @property
     def vocab_size(self):
@@ -229,8 +229,12 @@ class HFTokenizer(AbstractTokenizer):
         super().__init__(name)
 
         self.tokenizer = Tokenizer.from_file(vocab_file)
-        self.eod_id = self.tokenizer.token_to_id("<|endoftext|>")
-        self.pad_id = self.tokenizer.token_to_id("<|padding|>")
+        self.bod_id = self.tokenizer.token_to_id("<bos>")
+        self.eod_id = self.tokenizer.token_to_id("<eos>")
+        self.pad_id = self.tokenizer.token_to_id("<pad>")
+        self.pre_id = self.tokenizer.token_to_id("<pre>")
+        self.suf_id = self.tokenizer.token_to_id("<suf>")
+        self.mid_id = self.tokenizer.token_to_id("<mid>")
 
     @property
     def vocab_size(self):
@@ -254,8 +258,24 @@ class HFTokenizer(AbstractTokenizer):
         return self.tokenizer.decode(token_ids)
 
     @property
+    def bod(self):
+        return self.bod_id
+
+    @property
     def eod(self):
         return self.eod_id
+
+    @property
+    def pre(self):
+        return self.pre_id
+
+    @property
+    def suf(self):
+        return self.suf_id
+
+    @property
+    def mid(self):
+        return self.mid_id
 
 
 class HFGPT2Tokenizer(AbstractTokenizer):

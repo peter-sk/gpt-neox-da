@@ -28,6 +28,8 @@ import numpy as np
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 )
+
+import random
 import time
 import tqdm
 import torch
@@ -36,6 +38,24 @@ import ftfy
 from megatron.tokenizer import build_tokenizer
 from megatron.data import indexed_dataset
 from threading import Semaphore
+
+
+class Range(object):
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+    def __eq__(self, other):
+        return self.start <= other <= self.end
+
+    def __contains__(self, item):
+        return self.__eq__(item)
+
+    def __iter__(self):
+        yield self
+
+    def __repr__(self):
+        return '[{0},{1}]'.format(self.start, self.end)
 
 
 class Encoder(object):
@@ -47,20 +67,45 @@ class Encoder(object):
         Encoder.tokenizer = build_tokenizer(self.args)
         Encoder.max_length = Encoder.tokenizer.tokenizer.model_max_length if hasattr(Encoder.tokenizer.tokenizer, 'model_max_length') else 2048
 
+    def _fim(self, doc):
+        orig_doc = doc
+        has_bod = doc[0] == Encoder.tokenizer.bod
+        if has_bod:
+            doc = doc[1:]
+        has_eod = doc[-1] == Encoder.tokenizer.eod
+        if has_eod:
+            doc = doc[:-1]
+        if len(doc) < 3:
+            return orig_doc
+        mid = suf = -1
+        while mid == suf:
+            mid, suf = sorted((random.choice(range(1,len(doc))),random.choice(range(1,len(doc)))))
+        new_doc = [Encoder.tokenizer.pre]
+        if has_bod:
+            new_doc.append(Encoder.tokenizer.bod)
+        new_doc.extend(doc[:mid])
+        new_doc.append(Encoder.tokenizer.suf)
+        new_doc.extend(doc[suf:])
+        if has_eod:
+            new_doc.append(Encoder.tokenizer.eod)
+        new_doc.append(Encoder.tokenizer.mid)
+        new_doc.extend(doc[mid:suf])
+        return new_doc
+
     def encode(self, text):
         if self.args.ftfy:
             text = ftfy.fix_text(text)
         ids = {}
         for key in self.args.jsonl_keys:
-            doc_ids = []
-            text_ids = Encoder.tokenizer.tokenize(text)
-            if len(text_ids) > Encoder.max_length:
-                print(f"WARNING: truncating {len(text_ids)} to {Encoder.max_length} tokens")
-                text_ids = text_ids[:Encoder.max_length]
-            if len(text_ids) > 0:
-                doc_ids.append(text_ids)
+            text_ids = []
+            if self.args.prepend_bod:
+                text_ids.append(Encoder.tokenizer.bod)
+            text_ids.extend(Encoder.tokenizer.tokenize(text))
             if self.args.append_eod:
-                doc_ids[-1].append(Encoder.tokenizer.eod)
+                text_ids.append(Encoder.tokenizer.eod)
+            doc_ids = [text_ids[i:i+Encoder.max_length] for i in range(0,len(text_ids),Encoder.max_length)]
+            if self.args.fill_in_the_middle:
+                doc_ids = [self._fim(doc) if random.random() < self.args.fill_in_the_middle else doc for doc in doc_ids]
             ids[key] = doc_ids
         return ids, len(text)
 
@@ -109,6 +154,18 @@ def get_args():
         type=str,
         default=None,
         help="Path to the BPE merge file (if necessary).",
+    )
+    group.add_argument(
+        "--fill-in-the-middle",
+        type=float,
+        default=0.,
+        choices=Range(0.,1.),
+        help="Probabilty to fill in the middle (FIM), i.e., split into prefix, suffix, middle",
+    )
+    group.add_argument(
+        "--prepend-bod",
+        action="store_true",
+        help="Prepend an <bod> token to the beginning of a document.",
     )
     group.add_argument(
         "--append-eod",

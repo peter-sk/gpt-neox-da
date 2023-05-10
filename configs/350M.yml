@@ -47,7 +47,7 @@
     "contiguous_gradients": True,
   },
    # batch / data settings
-   "train_micro_batch_size_per_gpu": 4,
+   "train_micro_batch_size_per_gpu": 8,
    "data-impl": "mmap",
 
    # activation checkpointing
@@ -85,6 +85,7 @@
    # logging
    "log-interval": 100,
    "steps_per_print": 10,
-   "keep-last-n-checkpoints": 4,
+   "keep-last-n-checkpoints": 10,
    "wall_clock_breakdown": true,
+
 }

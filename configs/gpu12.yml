@@ -1,0 +1,6 @@
+{
+   "hostfile": "configs/hostfile",
+   "include": "127.0.0.1:1,2",
+   "log-dir": "log12",
+   "master-port": 29501,
+}
