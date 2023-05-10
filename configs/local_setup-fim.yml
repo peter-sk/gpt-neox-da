@@ -110,8 +110,8 @@
   "vocab-file": "../corpora/tokenizer/tokenizer.json",
   "merge-file": "../corpora/tokenizer/merges.txt",
 
-  "save": "checkpoints",
-  "load": "checkpoints",
+  "save": "checkpoints-fim",
+  "load": "checkpoints-fim",
   "checkpoint_validation_with_forward_pass": True,
 
   "tensorboard-dir": "tensorboard",
