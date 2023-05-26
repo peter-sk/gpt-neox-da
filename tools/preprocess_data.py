@@ -92,6 +92,9 @@ class Encoder(object):
         new_doc.extend(doc[mid:suf])
         return new_doc
 
+    def _fcm(self, doc, thresh):
+        return [token if random.random() >= thresh else Encoder.tokenizer.mask for token in doc]
+
     def encode(self, text):
         if self.args.ftfy:
             text = ftfy.fix_text(text)
@@ -104,6 +107,10 @@ class Encoder(object):
             if self.args.append_eod:
                 text_ids.append(Encoder.tokenizer.eod)
             doc_ids = [text_ids[i:i+Encoder.max_length] for i in range(0,len(text_ids),Encoder.max_length)]
+            if self.args.forgetful_causal_masking:
+                doc_ids = [self._fcm(doc, random.random()*self.args.forgetful_causal_masking) for doc in doc_ids]
+            if self.args.two_pass:
+                doc_ids = doc_ids+[Encoder.tokenizer.copy]+doc_ids
             if self.args.fill_in_the_middle:
                 doc_ids = [self._fim(doc) if random.random() < self.args.fill_in_the_middle else doc for doc in doc_ids]
             ids[key] = doc_ids
@@ -156,11 +163,23 @@ def get_args():
         help="Path to the BPE merge file (if necessary).",
     )
     group.add_argument(
+        "--forgetful-causal-masking",
+        type=float,
+        default=0.,
+        choices=Range(0.,1.),
+        help="Mask ratio specifying the maximum probability for forgetful causal masking (FCM), i.e., masking individual tokens in the past",
+    )
+    group.add_argument(
+        "--two-pass",
+        action="store_true",
+        help="Double the input sequence with a <copy> token in between the two copies.",
+    )
+    group.add_argument(
         "--fill-in-the-middle",
         type=float,
         default=0.,
         choices=Range(0.,1.),
-        help="Probabilty to fill in the middle (FIM), i.e., split into prefix, suffix, middle",
+        help="Probabilty to fill in the middle (FIM), i.e., split into prefix, suffix, middle.",
     )
     group.add_argument(
         "--prepend-bod",

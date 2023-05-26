@@ -235,6 +235,8 @@ class HFTokenizer(AbstractTokenizer):
         self.pre_id = self.tokenizer.token_to_id("<pre>")
         self.suf_id = self.tokenizer.token_to_id("<suf>")
         self.mid_id = self.tokenizer.token_to_id("<mid>")
+        self.mask_id = self.tokenizer.token_to_id("<mask>")
+        self.copy_id = self.tokenizer.token_to_id("<copy>")
 
     @property
     def vocab_size(self):
@@ -276,6 +278,14 @@ class HFTokenizer(AbstractTokenizer):
     @property
     def mid(self):
         return self.mid_id
+
+    @property
+    def mask(self):
+        return self.mask_id
+
+    @property
+    def copy(self):
+        return self.copy_id
 
 
 class HFGPT2Tokenizer(AbstractTokenizer):
