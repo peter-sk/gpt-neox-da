@@ -99,6 +99,7 @@ class Encoder(object):
         if self.args.ftfy:
             text = ftfy.fix_text(text)
         ids = {}
+        max_length = (Encoder.max_length-1)//2 if self.args.half_pass else Encoder.max_length
         for key in self.args.jsonl_keys:
             text_ids = []
             if self.args.prepend_bod:
@@ -106,10 +107,10 @@ class Encoder(object):
             text_ids.extend(Encoder.tokenizer.tokenize(text))
             if self.args.append_eod:
                 text_ids.append(Encoder.tokenizer.eod)
-            doc_ids = [text_ids[i:i+Encoder.max_length] for i in range(0,len(text_ids),Encoder.max_length)]
+            doc_ids = [text_ids[i:i+max_length] for i in range(0,len(text_ids),max_length)]
             if self.args.forgetful_causal_masking:
                 doc_ids = [self._fcm(doc, random.random()*self.args.forgetful_causal_masking) for doc in doc_ids]
-            if self.args.two_pass:
+            if self.args.two_pass or self.args.half_pass:
                 doc_ids = doc_ids+[Encoder.tokenizer.copy]+doc_ids
             if self.args.fill_in_the_middle:
                 doc_ids = [self._fim(doc) if random.random() < self.args.fill_in_the_middle else doc for doc in doc_ids]
@@ -173,6 +174,11 @@ def get_args():
         "--two-pass",
         action="store_true",
         help="Double the input sequence with a <copy> token in between the two copies.",
+    )
+    group.add_argument(
+        "--half-pass",
+        action="store_true",
+        help="Double half the input sequence with a <copy> token in between the two copies.",
     )
     group.add_argument(
         "--fill-in-the-middle",
