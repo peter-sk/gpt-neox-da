@@ -65,7 +65,8 @@ class Encoder(object):
     def initializer(self):
         # Use Encoder class as a container for global data
         Encoder.tokenizer = build_tokenizer(self.args)
-        Encoder.max_length = Encoder.tokenizer.tokenizer.model_max_length if hasattr(Encoder.tokenizer.tokenizer, 'model_max_length') else 2048
+        Encoder.max_length = Encoder.tokenizer.tokenizer.model_max_length if hasattr(Encoder.tokenizer.tokenizer, 'model_max_length') else self.args.sequence_length
+        print(f"Using model_max_length = {Encoder.max_length}")
 
     def _fim(self, doc):
         orig_doc = doc
@@ -162,6 +163,12 @@ def get_args():
         type=str,
         default=None,
         help="Path to the BPE merge file (if necessary).",
+    )
+    group.add_argument(
+        "--sequence-length",
+        default=2048,
+        help="Maximum sequence length to use if not specified in the tokenizer.",
+        type=int,
     )
     group.add_argument(
         "--forgetful-causal-masking",
